@@ -14,7 +14,7 @@ st.set_page_config(
 # --- MODELİ YÜKLE ---
 @st.cache_resource
 def model_yukle():
-    df = pd.read_csv("/Users/elif/Downloads/ai4i2020.csv")
+    url = "https://raw.githubusercontent.com/krteliff/predictive-maintenance-dss/main/ai4i2020.csv"
     df_model = df.drop(columns=["UDI", "Product ID", "TWF", "HDF", "PWF", "OSF", "RNF"])
     df_model["Type"] = df_model["Type"].map({"L": 0, "M": 1, "H": 2})
     df_majority = df_model[df_model["Machine failure"] == 0]
@@ -77,7 +77,7 @@ st.divider()
 
 # --- GEÇMİŞ ANALİZ ---
 st.subheader("📊 Veri Seti Özeti")
-df = pd.read_csv("/Users/elif/Downloads/ai4i2020.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/krteliff/predictive-maintenance-dss/main/ai4i2020.csv")
 col3, col4, col5 = st.columns(3)
 with col3:
     st.metric("Toplam Kayıt", f"{len(df):,}")
