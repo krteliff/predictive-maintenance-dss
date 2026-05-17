@@ -4,17 +4,16 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils import resample
 
-# --- SAYFA AYARI ---
 st.set_page_config(
     page_title="Makine Arıza Karar Destek Sistemi",
     page_icon="🏭",
     layout="wide"
 )
 
-# --- MODELİ YÜKLE ---
 @st.cache_resource
 def model_yukle():
     url = "https://raw.githubusercontent.com/krteliff/predictive-maintenance-dss/main/ai4i2020.csv"
+    df = pd.read_csv(url)
     df_model = df.drop(columns=["UDI", "Product ID", "TWF", "HDF", "PWF", "OSF", "RNF"])
     df_model["Type"] = df_model["Type"].map({"L": 0, "M": 1, "H": 2})
     df_majority = df_model[df_model["Machine failure"] == 0]
@@ -29,12 +28,10 @@ def model_yukle():
 
 model, feature_names = model_yukle()
 
-# --- BAŞLIK ---
 st.title("🏭 Makine Arıza Karar Destek Sistemi")
 st.markdown("Sensör değerlerini girin, sistem arıza riskini analiz etsin.")
 st.divider()
 
-# --- SENSORLER ---
 col1, col2 = st.columns(2)
 
 with col1:
@@ -49,7 +46,6 @@ with col1:
 
 with col2:
     st.subheader("🎯 Karar")
-
     sensor_verisi = pd.DataFrame([[type_val, air_temp, process_temp, rot_speed, torque, tool_wear]],
                                   columns=feature_names)
     olasilik = model.predict_proba(sensor_verisi)[0][1]
@@ -69,13 +65,10 @@ with col2:
 
     st.metric("Arıza Olasılığı", f"%{olasilik*100:.1f}")
     st.info(f"📋 Önerilen Aksiyon: {aksiyon}")
-
-    # Risk göstergesi
     st.progress(olasilik)
 
 st.divider()
 
-# --- GEÇMİŞ ANALİZ ---
 st.subheader("📊 Veri Seti Özeti")
 df = pd.read_csv("https://raw.githubusercontent.com/krteliff/predictive-maintenance-dss/main/ai4i2020.csv")
 col3, col4, col5 = st.columns(3)
